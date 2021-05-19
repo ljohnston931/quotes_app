@@ -30,8 +30,8 @@ export default function LoginScreen({navigation}) {
 							alert('User does not exist anymore.')
 							return
 						}
-						const user = firestoreDocument.data()
-						navigation.navigate('Home', {user})
+						// const user = firestoreDocument.data()
+						// navigation.navigate('Home', {user})
 					})
 					.catch(error => {
 						alert(error)

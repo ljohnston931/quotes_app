@@ -15,10 +15,10 @@ const firebaseConfig = {
 if (!firebase.apps.length) {
 	firebase.initializeApp(firebaseConfig)
 	// trying to connect locally
-	if (location && location.hostname === 'localhost') {
-		let db = firebase.firestore()
-		db.useEmulator('localhost', 8081)
-	}
+	// if (location && location.hostname === 'localhost') {
+	// 	let db = firebase.firestore()
+	// 	db.useEmulator('localhost', 8081)
+	// }
 }
 
 export { firebase }
