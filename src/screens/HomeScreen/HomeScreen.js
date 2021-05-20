@@ -6,25 +6,25 @@ import { firebase } from '../../firebase/config'
 
 export default function HomeScreen(props) {
 
-	const [entityText, setEntityText] = useState('')
-	const [entities, setEntities] = useState([])
+	const [collectionName, setCollectionName] = useState('')
+	const [collections, setCollections] = useState([])
 
-	const entityRef = firebase.firestore().collection('entities')
+	const collectionRef = firebase.firestore().collection('collections')
 	const userID = props.extraData.id
 
 	useEffect(() => {
-		entityRef
+		collectionRef
 			.where('authorID', '==', userID)
 			.orderBy('createdAt', 'desc')
 			.onSnapshot(
 				querySnapshot => {
-					const newEntities = []
+					const newCollections = []
 					querySnapshot.forEach(doc => {
-						const entity = doc.data()
-						entity.id = doc.id
-						newEntities.push(entity)
+						const collection = doc.data()
+						collection.id = doc.id
+						newCollections.push(collection)
 					})
-					setEntities(newEntities)
+					setCollections(newCollections)
 				},
 				error => {
 					console.log(error)
@@ -33,18 +33,18 @@ export default function HomeScreen(props) {
 	}, [])
 
 	const onAddButtonPress = () => {
-		if (entityText && entityText.length > 0) {
+		if (collectionName && collectionName.length > 0) {
 			const timestamp = firebase.firestore.FieldValue.serverTimestamp()
 			const data = {
-				text: entityText,
+				text: collectionName,
 				authorID: userID,
 				createdAt: timestamp,
 			}
-			entityRef
+			collectionRef
 				.add(data)
 				// eslint-disable-next-line no-unused-vars
 				.then(_doc => {
-					setEntityText('')
+					setCollectionName('')
 					Keyboard.dismiss()
 				})
 				.catch((error) => {
@@ -52,14 +52,21 @@ export default function HomeScreen(props) {
 				})
 		}
 	}
+    
+	const openCollection = (item) => {
+		alert(JSON.stringify(item))
+	}
 
-	const renderEntity = ({item, index}) => {
+	// eslint-disable-next-line no-unused-vars
+	const renderCollection = ({item, index}) => {
 		return (
-			<View style={styles.entityContainer}>
-				<Text style={styles.entityText}>
-					{index}. {item.text}
+			<TouchableOpacity 
+				style={styles.collectionContainer} 
+				onPress={() => openCollection(item)}>
+				<Text style={styles.collectionText}>
+					{item.text}
 				</Text>
-			</View>
+			</TouchableOpacity>
 		)
 	}
 
@@ -68,10 +75,10 @@ export default function HomeScreen(props) {
 			<View style={styles.formContainer}>
 				<TextInput
 					style={styles.input}
-					placeholder='Add new entity'
+					placeholder='Start a new collection'
 					placeholderTextColor="#aaaaaa"
-					onChangeText={(text) => setEntityText(text)}
-					value={entityText}
+					onChangeText={(text) => setCollectionName(text)}
+					value={collectionName}
 					underlineColorAndroid="transparent"
 					autoCapitalize="none"
 				/>
@@ -79,11 +86,11 @@ export default function HomeScreen(props) {
 					<Text style={styles.buttonText}>Add</Text>
 				</TouchableOpacity>
 			</View>
-			{ entities && (
+			{ collections && (
 				<View style={styles.listContainer}>
 					<FlatList
-						data={entities}
-						renderItem={renderEntity}
+						data={collections}
+						renderItem={renderCollection}
 						keyExtractor={(item) => item.id}
 						removeClippedSubviews={true}
 					/>

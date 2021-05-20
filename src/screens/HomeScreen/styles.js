@@ -43,13 +43,13 @@ export default StyleSheet.create({
 		marginTop: 20,
 		padding: 20,
 	},
-	entityContainer: {
+	collectionContainer: {
 		marginTop: 16,
 		borderBottomColor: '#cccccc',
 		borderBottomWidth: 1,
 		paddingBottom: 16
 	},
-	entityText: {
+	collectionText: {
 		fontSize: 20,
 		color: '#333333'
 	}
