@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { LoginScreen, HomeScreen, RegistrationScreen } from './src/screens'
 import {decode, encode} from 'base-64'
 import { firebase } from './src/firebase/config'
+import CollectionScreen from './src/screens/CollectionScreen/CollectionScreen'
 
 if (!global.btoa) {  global.btoa = encode }
 if (!global.atob) { global.atob = decode }
@@ -49,9 +50,14 @@ export default function App() {
 		<NavigationContainer>
 			<Stack.Navigator>
 				{ user ? (
-					<Stack.Screen name="Home">
-						{props => <HomeScreen {...props} extraData={user} />}
-					</Stack.Screen>
+					<>
+						<Stack.Screen name="Home">
+							{props => <HomeScreen {...props} extraData={user} />}
+						</Stack.Screen>
+						<Stack.Screen name="Collection">
+							{props => <CollectionScreen {...props} extraData={user} />}
+						</Stack.Screen>
+					</>
 				) : (
 					<>
 						<Stack.Screen name="Login" component={LoginScreen} />
