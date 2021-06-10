@@ -53,8 +53,8 @@ export default function HomeScreen(props) {
 		}
 	}
     
-	const openCollection = (item) => {
-		alert(JSON.stringify(item))
+	const openCollection = (collection) => {
+		alert(collection.id)
 	}
 
 	// eslint-disable-next-line no-unused-vars
@@ -91,7 +91,7 @@ export default function HomeScreen(props) {
 					<FlatList
 						data={collections}
 						renderItem={renderCollection}
-						keyExtractor={(item) => item.id}
+						keyExtractor={(collection) => collection.id}
 						removeClippedSubviews={true}
 					/>
 				</View>
