@@ -4,13 +4,14 @@ import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'rea
 import styles from './styles'
 import { firebase } from '../../firebase/config'
 
-export default function HomeScreen(props) {
+// eslint-disable-next-line no-unused-vars
+export default function HomeScreen({navigation, route, extraData}) {
 
 	const [collectionName, setCollectionName] = useState('')
 	const [collections, setCollections] = useState([])
 
 	const collectionRef = firebase.firestore().collection('collections')
-	const userID = props.extraData.id
+	const userID = extraData.id
 
 	useEffect(() => {
 		collectionRef
@@ -54,7 +55,7 @@ export default function HomeScreen(props) {
 	}
     
 	const openCollection = (collection) => {
-		alert(collection.id)
+		
 	}
 
 	// eslint-disable-next-line no-unused-vars
