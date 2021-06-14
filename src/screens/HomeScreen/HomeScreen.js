@@ -55,7 +55,7 @@ export default function HomeScreen({navigation, route, extraData}) {
 	}
     
 	const openCollection = (collection) => {
-		navigation.navigate('Collection')
+		navigation.navigate('Collection', {"collection": collection})
 	}
 
 	// eslint-disable-next-line no-unused-vars
