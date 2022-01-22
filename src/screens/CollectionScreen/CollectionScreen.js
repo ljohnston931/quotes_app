@@ -15,27 +15,31 @@ export default function FakeCollectionScreen({navigation, route, extraData}) {
 
     useEffect(() => {
         const handleSnippetChanges = (snapshot) => {
-            const newSnippets = []
-            snapshot.forEach(doc => {
+            const snippetUsers = snapshot.docs.map(doc => {
                 const snippetUser = doc.data()
                 snippetUser.id = doc.id
-                snippetRef.doc(snippetUser.snippetID).get()
-                    .then(textDoc => {
-                        if (textDoc.exists) {
-                            const snippetText = textDoc.data()
-                            const snippet = {
-                                ...snippetUser,
-                                ...snippetText
-                            }
-                            newSnippets.push(snippet)
-                        } else {
-                            alert("Snippet " + snippetID + " not found")
-                        }
-                    })
-                
+                return snippetUser
             })
+            const textDocPromises = snippetUsers.map(snippetUser => {
+                return snippetRef.doc(snippetUser.snippetID).get()
+            })
+            Promise.all(textDocPromises).then((textDocs) => {
+                const snippetTexts = textDocs.map(textDoc => {
+                    if (textDoc.exists) {
+                        const snippetText = textDoc.data()
+                        return snippetText
+                    }
+                }) 
+            const newSnippets = [];
+            for (let i = 0; i < snippetUsers.length; i++) {
+                newSnippets.push({
+                    ...snippetUsers[i],
+                    ...snippetTexts[i]
+                })
+            }
             setSnippets(newSnippets)
-        };
+        });
+    }
 
         const unsubscribe = snippetUserRef
             .where('userID', '==', userID)
