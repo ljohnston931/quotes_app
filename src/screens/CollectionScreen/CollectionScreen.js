@@ -13,39 +13,41 @@ export default function FakeCollectionScreen({navigation, route, extraData}) {
     const snippetRef = firebase.firestore().collection('snippets')
     const snippetUserRef = firebase.firestore().collection('snippet_user')
 
-    // useEffect(() => {
-    //     snippetUserRef
-    //         .where('userID', '==', userID)
-    //         .where('collectionID', '==', collection.id)
-    //         .orderBy('addedAt', 'desc')
-    //         .onSnapshot(
-    //             querySnapshot => {
-    //                 const newSnippets = []
-    //                 querySnapshot.forEach(doc => {
-    //                     const snippetUser = doc.data()
-    //                     snippetUser.id = doc.id
-    //                     snippetRef.doc(snippetUser.snippetID).get()
-    //                         .then(textDoc => {
-    //                             if (textDoc.exists) {
-    //                                 const snippetText = textDoc.data()
-    //                                 const snippet = {
-    //                                     ...snippetUser,
-    //                                     ...snippetText
-    //                                 }
-    //                                 newSnippets.push(snippet)
-    //                             } else {
-    //                                 alert("Snippet " + snippetID + " not found")
-    //                             }
-    //                         })
+    useEffect(() => {
+        const unsubscribe = 
+        snippetUserRef
+            .where('userID', '==', userID)
+            .where('collectionID', '==', collection.id)
+            .orderBy('addedAt', 'desc')
+            .onSnapshot(
+                querySnapshot => {
+                    const newSnippets = []
+                    querySnapshot.forEach(doc => {
+                        const snippetUser = doc.data()
+                        snippetUser.id = doc.id
+                        snippetRef.doc(snippetUser.snippetID).get()
+                            .then(textDoc => {
+                                if (textDoc.exists) {
+                                    const snippetText = textDoc.data()
+                                    const snippet = {
+                                        ...snippetUser,
+                                        ...snippetText
+                                    }
+                                    newSnippets.push(snippet)
+                                } else {
+                                    alert("Snippet " + snippetID + " not found")
+                                }
+                            })
                         
-    //                 })
-    //                 setSnippets(newSnippets)
-    //             },
-    //             error => {
-    //                 console.log(error)
-    //             }
-    //         )
-    // }, [])
+                    })
+                    setSnippets(newSnippets)
+                },
+                error => {
+                    console.log(error)
+                }
+            )
+        return () => unsubscribe();
+    }, [])
 
     const onAddButtonPress = () => {
         if (newSnippet && newSnippet.length > 0) {
@@ -61,6 +63,8 @@ export default function FakeCollectionScreen({navigation, route, extraData}) {
                     setNewSnippet('')
                     Keyboard.dismiss()
 
+                    const snippetID = doc.id
+
                     const userData = {
                         userID: userID,
                         snippetID: snippetID,
@@ -68,7 +72,6 @@ export default function FakeCollectionScreen({navigation, route, extraData}) {
                         addedAt: timestamp
                     }
 
-                    const snippetID = doc.id
                     snippetUserRef
                         .add(userData)
                 })                        

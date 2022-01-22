@@ -14,6 +14,7 @@ export default function HomeScreen({navigation, route, extraData}) {
 	const userID = extraData.id
 
 	useEffect(() => {
+		const unsubscribe = 
 		collectionRef
 			.where('authorID', '==', userID)
 			.orderBy('createdAt', 'desc')
@@ -31,6 +32,7 @@ export default function HomeScreen({navigation, route, extraData}) {
 					console.log(error)
 				}
 			)
+		return () => unsubscribe()
 	}, [])
 
 	const onAddButtonPress = () => {
@@ -43,8 +45,7 @@ export default function HomeScreen({navigation, route, extraData}) {
 			}
 			collectionRef
 				.add(data)
-				// eslint-disable-next-line no-unused-vars
-				.then(_doc => {
+				.then( _ => {
 					setCollectionName('')
 					Keyboard.dismiss()
 				})
