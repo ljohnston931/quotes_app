@@ -14,34 +14,34 @@ export default function FakeCollectionScreen({navigation, route, extraData}) {
     const snippetUserRef = firebase.firestore().collection('snippet_user')
 
     useEffect(() => {
-        const unsubscribe = 
-        snippetUserRef
+        const handleSnippetChanges = (snapshot) => {
+            const newSnippets = []
+            snapshot.forEach(doc => {
+                const snippetUser = doc.data()
+                snippetUser.id = doc.id
+                snippetRef.doc(snippetUser.snippetID).get()
+                    .then(textDoc => {
+                        if (textDoc.exists) {
+                            const snippetText = textDoc.data()
+                            const snippet = {
+                                ...snippetUser,
+                                ...snippetText
+                            }
+                            newSnippets.push(snippet)
+                        } else {
+                            alert("Snippet " + snippetID + " not found")
+                        }
+                    })
+                
+            })
+            setSnippets(newSnippets)
+        };
+
+        const unsubscribe = snippetUserRef
             .where('userID', '==', userID)
             .where('collectionID', '==', collection.id)
             .orderBy('addedAt', 'desc')
-            .onSnapshot(
-                querySnapshot => {
-                    const newSnippets = []
-                    querySnapshot.forEach(doc => {
-                        const snippetUser = doc.data()
-                        snippetUser.id = doc.id
-                        snippetRef.doc(snippetUser.snippetID).get()
-                            .then(textDoc => {
-                                if (textDoc.exists) {
-                                    const snippetText = textDoc.data()
-                                    const snippet = {
-                                        ...snippetUser,
-                                        ...snippetText
-                                    }
-                                    newSnippets.push(snippet)
-                                } else {
-                                    alert("Snippet " + snippetID + " not found")
-                                }
-                            })
-                        
-                    })
-                    setSnippets(newSnippets)
-                },
+            .onSnapshot(handleSnippetChanges,
                 error => {
                     console.log(error)
                 }

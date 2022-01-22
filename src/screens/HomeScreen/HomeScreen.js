@@ -14,24 +14,20 @@ export default function HomeScreen({navigation, route, extraData}) {
 	const userID = extraData.id
 
 	useEffect(() => {
-		const unsubscribe = 
-		collectionRef
+		const handleCollectionChanges = (snapshot) => {
+			const newCollections = []
+			snapshot.forEach(doc => {
+				const collection = doc.data()
+				collection.id = doc.id
+				newCollections.push(collection)
+			})
+			setCollections(newCollections)
+		}
+		
+		const unsubscribe = collectionRef
 			.where('authorID', '==', userID)
 			.orderBy('createdAt', 'desc')
-			.onSnapshot(
-				querySnapshot => {
-					const newCollections = []
-					querySnapshot.forEach(doc => {
-						const collection = doc.data()
-						collection.id = doc.id
-						newCollections.push(collection)
-					})
-					setCollections(newCollections)
-				},
-				error => {
-					console.log(error)
-				}
-			)
+			.onSnapshot(handleCollectionChanges, error => {console.log(error)})
 		return () => unsubscribe()
 	}, [])
 
